@@ -17,5 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// メール認証画面
+Route::get('/verify-email', function () {
+    return view('auth.verify-email');
+});
+
 
 require __DIR__.'/auth.php';
