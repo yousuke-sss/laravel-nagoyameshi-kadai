@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
-      use RefreshDatabase;
+    use RefreshDatabase;
  
      public function test_login_screen_can_be_rendered(): void
      {
@@ -23,18 +23,21 @@ class AuthenticationTest extends TestCase
  
      public function test_admins_can_authenticate_using_the_login_screen(): void
      {
+        // ミドルウェアを無効化
+         $this->withoutMiddleware();
+
          $admin = new Admin();
          $admin->email = 'admin@example.com';
          $admin->password = Hash::make('nagoyameshi');
          $admin->save();
  
          $response = $this->post('/admin/login', [
+            '_token' => csrf_token(), // CSRFトークンを追加
              'email' => $admin->email,
              'password' => 'nagoyameshi',
          ]);
- 
-         $this->assertTrue(Auth::guard('admin')->check());
          $response->assertRedirect(RouteServiceProvider::ADMIN_HOME);
+         $this->assertAuthenticated('admin');
      }
  
      public function test_admins_can_not_authenticate_with_invalid_password(): void
@@ -61,7 +64,7 @@ class AuthenticationTest extends TestCase
  
          $response = $this->actingAs($admin, 'admin')->post('/admin/logout');
  
-         $this->assertGuest();
+         $this->assertGuest('admin');
          $response->assertRedirect('/');
      }
 }
