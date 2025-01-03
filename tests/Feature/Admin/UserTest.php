@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\User;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -17,8 +18,8 @@ class UserTest extends TestCase
      */
     public function test_guest_cannot_access_users_index(): void
     {
-        $response = $this->get('/admin/users');
-        $response->assertRedirect('admin/login');
+        $response = $this->get(route('admin.users.index'));
+        $response->assertRedirect(route('admin.login'));
     }
 
     /**
@@ -29,8 +30,8 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $response = $this->get('/admin/users');
-        $response->assertForbidden();
+        $response = $this->actingAs($user)->get(route('admin.users.index'));
+        $response->assertRedirect(route('admin.login'));
     }
 
     /**
@@ -38,10 +39,12 @@ class UserTest extends TestCase
      */
     public function test_admin_can_access_users_index(): void
     {
-        $admin = Admin::factory()->create();
-        $this->actingAs($admin, 'admin');
+        $admin = new Admin();
+        $admin->email = 'admin@example.com';
+        $admin->password = Hash::make('nagoyameshi');
+        $admin->save();
 
-        $response = $this->get('/admin/users');
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.users.index'));
         $response->assertStatus(200);
     }
 
@@ -50,8 +53,10 @@ class UserTest extends TestCase
      */
     public function test_guest_cannot_access_user_show(): void
     {
-        $response = $this->get('/admin/users/1');
-        $response->assertRedirect('/login');
+        $user = User::factory()->create();
+ 
+        $response = $this->get(route('admin.users.show', $user));
+        $response->assertRedirect(route('admin.login'));
     }
 
     /**
@@ -62,8 +67,8 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $response = $this->get('/admin/users/1');
-        $response->assertForbidden();
+        $response = $this->actingAs($user)->get(route('admin.users.show', $user));
+        $response->assertRedirect(route('admin.login'));
     }
 
     /**
@@ -71,11 +76,14 @@ class UserTest extends TestCase
      */
     public function test_admin_can_access_user_show(): void
     {
-        $admin = Admin::factory()->create();
-        $this->actingAs($admin, 'admin');
+        $admin = new Admin();
+        $admin->email = 'admin@example.com';
+        $admin->password = Hash::make('nagoyameshi');
+        $admin->save();
 
         $user = User::factory()->create();
-        $response = $this->get("/admin/users/{$user->id}");
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.users.show', $user));
         $response->assertStatus(200);
     }
 }
