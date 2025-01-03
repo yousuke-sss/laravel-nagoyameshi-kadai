@@ -45,6 +45,7 @@ class UserTest extends TestCase
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
 
+
         $response = $this->actingAs($admin, 'admin')->get(route('admin.users.index'));
         $response->assertStatus(200);
     }
@@ -81,8 +82,6 @@ class UserTest extends TestCase
         $admin->email = 'admin@example.com';
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
-
-
         $user = User::factory()->create();
         $response = $this->actingAs($admin, 'admin')->get(route('admin.users.show', $user));
         $response->assertStatus(200);
