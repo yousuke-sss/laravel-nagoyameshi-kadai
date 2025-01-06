@@ -28,7 +28,7 @@ class RestaurantController extends Controller
 //詳細ページ
 public function show(Restaurant $restaurant){
 
-    return view('admin.restaurants.show', compact('restaurants'));
+    return view('admin.restaurants.show', compact('restaurant'));
 }
 
 //作成ページ
@@ -62,13 +62,13 @@ public function create()
 
        $restaurant->save(); 
 
-        return redirect()->route('restaurants/{restaurant->id}')->with('flash_message', '店舗を登録しました。');
+        return redirect()->route('admin.restaurants.show',$restaurant->id)->with('flash_message', '店舗を登録しました。');
     }
 
      // 編集ページ
-     public function edit(RestaurantRequest $restaurants)
+     public function edit(Restaurant $restaurant)
      {
-        return view('admin.restaurants.edit',compact('restaurants'));
+        return view('admin.restaurants.edit',compact('restaurant'));
      }    
 
     // 更新機能
@@ -92,7 +92,7 @@ public function create()
         }
         $restaurant->save(); 
 
-        return redirect()->route('restaurants.$restaurant')->with('flash_message', '店舗を編集しました。');
+        return redirect()->route('admin.restaurants.show', $restaurant->id)->with('flash_message', '店舗を編集しました。');
     }     
 
         // 削除機能
