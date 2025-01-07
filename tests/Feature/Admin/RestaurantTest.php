@@ -163,9 +163,10 @@ class RestaurantTest extends TestCase
         $admin->email = 'admin@example.com';
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
-        $restaurant = Restaurant::factory()->create();
-        $response = $this->actingAs($admin, 'admin')->post(route('admin.restaurants.store'));
-        $response->assertStatus(200);
+        $restaurant = Restaurant::factory()->create()->toArray();
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.restaurants.store'), $restaurant);
+        $this->assertDatabaseHas('restaurants', $restaurant);
+        $response->assertRedirect(route('admin.restaurants.index'));
     }
 
     /**  @test*/
@@ -237,7 +238,23 @@ class RestaurantTest extends TestCase
         $admin->save();
         $restaurant = Restaurant::factory()->create();
         $response = $this->actingAs($admin, 'admin')->patch(route('admin.restaurants.update', $restaurant));
-        $response->assertStatus(200);
+
+        $old_restaurant = Restaurant::factory()->create();
+        $new_restaurant_data = [
+            'name' => 'テスト更新',
+            'description' => 'テスト更新',
+            'lowest_price' => 5000,
+            'highest_price' => 10000,
+            'postal_code' => '1234567',
+            'address' => 'テスト更新',
+            'opening_time' => '13:00:00',
+            'closing_time' => '23:00:00',
+            'seating_capacity' => 100
+        ];
+        $response = $this->actingAs($admin, 'admin')->patch(route('admin.restaurants.update', $old_restaurant), $new_restaurant_data);
+
+        $this->assertDatabaseHas('restaurants', $new_restaurant_data);
+        $response->assertRedirect(route('admin.restaurants.show', $old_restaurant));
 
     }
 
@@ -274,7 +291,9 @@ class RestaurantTest extends TestCase
         $admin->save();
         $restaurant = Restaurant::factory()->create();
         $response = $this->actingAs($admin, 'admin')->delete(route('admin.restaurants.destroy', $restaurant));
-        $response->assertStatus(200);
+        $this->assertDatabaseMissing('restaurants', ['id' => $restaurant->id]);
+        $response->assertRedirect(route('admin.restaurants.index'));
+
 
     }
 }

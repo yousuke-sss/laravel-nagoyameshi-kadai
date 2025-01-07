@@ -62,7 +62,8 @@ public function create()
 
        $restaurant->save(); 
 
-        return redirect()->route('admin.restaurants.show',$restaurant->id)->with('flash_message', '店舗を登録しました。');
+        return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
+     
     }
 
      // 編集ページ
@@ -100,6 +101,7 @@ public function create()
     
             $restaurant->delete();
     
-            return redirect()->route('restaurants.index')->with('flash_message', '店舗を削除しました。');
+            return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を削除しました。');
+        
         }
 }

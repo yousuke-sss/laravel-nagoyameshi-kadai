@@ -30,7 +30,7 @@ class RestaurantRequest extends FormRequest
             'postal_code' => 'required|digits:7', // 数値で桁数7
             'address' => 'required|string', // 入力必須
             'opening_time' => 'required|date_format:H:i|before:closing_time', // 開店時間、closing_timeより前
-            'closing_time' => 'required|date_format:H:i|after:opening_time', // 閉店時間、opening_timeより後
+             'closing_time' => 'required|date_format:H:i|after:opening_time', // 閉店時間、opening_timeより後
             'seating_capacity' => 'required|integer|min:0', // 数値、最小値0
         ];
     }
