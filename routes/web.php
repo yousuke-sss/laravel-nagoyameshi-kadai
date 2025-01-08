@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RestaurantController;
+use App\Http\Controllers\Admin\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +41,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
     Route::get('restaurants/{restaurant}/edit', [RestaurantController::class, 'edit'])->name('restaurants.edit');//店舗編集ページ
     Route::patch('restaurants/{restaurant}/updata', [RestaurantController::class, 'update'])->name('restaurants.update');//店舗編集機能
     Route::delete('restaurants/{restaurant}', [RestaurantController::class, 'destroy'])->name('restaurants.destroy');//店舗削除機能
+
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');//カテゴリ一覧ページ
+    Route::post('categories/store', [CategoryController::class, 'store'])->name('categories.store');//カテゴリ追加機能
+    Route::patch('categories/{category}/update', [CategoryController::class, 'update'])->name('categories.update');//カテゴリ編集機能
+    Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');//カテゴリ削除機能
 });
