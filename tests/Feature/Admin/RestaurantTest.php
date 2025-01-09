@@ -141,9 +141,23 @@ class RestaurantTest extends TestCase
     public function guest_cannot_store_restaurant()
     {
 
-        $response = $this->get(route('admin.restaurants.store'));
-        $response->assertRedirect(route('admin.login'));
+        $restaurant_data = [
+            'name' => 'テスト',
+            'description' => 'テスト',
+            'lowest_price' => 1000,
+            'highest_price' => 5000,
+            'postal_code' => '0000000',
+            'address' => 'テスト',
+            'opening_time' => '10:00:00',
+            'closing_time' => '20:00:00',
+            'seating_capacity' => 50
+        ];
 
+        $response = $this->post(route('admin.restaurants.store'), $restaurant_data);
+
+        $this->assertDatabaseMissing('restaurants', $restaurant_data);
+
+        $response->assertRedirect(route('admin.login'));
     }
 
     /**  @test*/
@@ -151,9 +165,23 @@ class RestaurantTest extends TestCase
     public function user_cannot_store_restaurant()
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->get(route('admin.restaurants.store'));
-        $response->assertRedirect(route('admin.login'));
+        $restaurant_data = [
+            'name' => 'テスト',
+            'description' => 'テスト',
+            'lowest_price' => 1000,
+            'highest_price' => 5000,
+            'postal_code' => '0000000',
+            'address' => 'テスト',
+            'opening_time' => '10:00:00',
+            'closing_time' => '20:00:00',
+            'seating_capacity' => 50
+        ];
 
+        $response = $this->actingAs($user)->post(route('admin.restaurants.store'), $restaurant_data);
+
+        $this->assertDatabaseMissing('restaurants', $restaurant_data);
+
+        $response->assertRedirect(route('admin.login'));
     }
 
     /**  @test */
@@ -168,12 +196,34 @@ class RestaurantTest extends TestCase
         $categories = Category::factory()->count(3)->create();
         $category_ids = $categories->pluck('id')->toArray();
 
-        $restaurant = Restaurant::factory()->create()->toArray();
+        $new_restaurant_data = [
+            'name' => 'テスト',
+            'description' => 'テスト',
+            'lowest_price' => 1000,
+            'highest_price' => 5000,
+            'postal_code' => '0000000',
+            'address' => 'テスト',
+            'opening_time' => '10:00',
+            'closing_time' => '20:00',
+            'seating_capacity' => 50,
+            'category_ids' => $category_ids,
+        ];
 
-        $response = $this->actingAs($admin, 'admin')->post(route('admin.restaurants.store'), $restaurant);
-        unset($restaurant['category_ids']);
-        $this->assertDatabaseHas('restaurants', $restaurant);
+        // category_idsを除外したデータを用意
+        $restaurant_data_without_categories = $new_restaurant_data;
+        unset($restaurant_data_without_categories['category_ids']);
+
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.restaurants.store'),  $new_restaurant_data);
+        $this->assertDatabaseHas('restaurants', $restaurant_data_without_categories);
+
+        $restaurant = Restaurant::latest('id')->first();
+
+        foreach ($category_ids as $category_id) {
+            $this->assertDatabaseHas('category_restaurant', ['restaurant_id' => $restaurant->id, 'category_id' => $category_id]);
+        }
+
         $response->assertRedirect(route('admin.restaurants.index'));
+
     }
 
     /**  @test*/
@@ -216,39 +266,8 @@ class RestaurantTest extends TestCase
     //未ログインのユーザーは店舗を更新できない
     public function guest_cannot_update_restaurant()
     {
-
-        $restaurant = Restaurant::factory()->create();
-        $response = $this->patch(route('admin.restaurants.update', $restaurant));
-        $response->assertRedirect(route('admin.login'));
-
-    }
-
-    /**  @test*/
-    //ログイン済みの一般ユーザーは店舗を更新できない 
-    public function user_cannot_update_restaurant()
-    {
-        $user = User::factory()->create();
-        $restaurant = Restaurant::factory()->create();
-
-        $response = $this->actingAs($user)->patch(route('admin.restaurants.update', $restaurant));
-        $response->assertRedirect(route('admin.login'));
-
-    }
-
-    /**  @test */
-    //ログイン済みの管理者は店舗を更新できる
-    public function admin_can_update_restaurant()
-    {
-        $admin = new Admin();
-        $admin->email = 'admin@example.com';
-        $admin->password = Hash::make('nagoyameshi');
-        $admin->save();
-        $restaurant = Restaurant::factory()->create();
-        $categories = Category::factory()->count(3)->create();
-        $category_ids = $categories->pluck('id')->toArray();
-        $response = $this->actingAs($admin, 'admin')->patch(route('admin.restaurants.update', $restaurant));
-
         $old_restaurant = Restaurant::factory()->create();
+
         $new_restaurant_data = [
             'name' => 'テスト更新',
             'description' => 'テスト更新',
@@ -260,11 +279,81 @@ class RestaurantTest extends TestCase
             'closing_time' => '23:00:00',
             'seating_capacity' => 100
         ];
+
+        $response = $this->patch(route('admin.restaurants.update', $old_restaurant), $new_restaurant_data);
+
+        $this->assertDatabaseMissing('restaurants', $new_restaurant_data);
+
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    /**  @test*/
+    //ログイン済みの一般ユーザーは店舗を更新できない 
+    public function user_cannot_update_restaurant()
+    {
+        $user = User::factory()->create();
+
+        $old_restaurant = Restaurant::factory()->create();
+
+        $new_restaurant_data = [
+            'name' => 'テスト更新',
+            'description' => 'テスト更新',
+            'lowest_price' => 5000,
+            'highest_price' => 10000,
+            'postal_code' => '1234567',
+            'address' => 'テスト更新',
+            'opening_time' => '13:00',
+            'closing_time' => '23:00',
+            'seating_capacity' => 100
+        ];
+
+        $response = $this->actingAs($user)->patch(route('admin.restaurants.update', $old_restaurant), $new_restaurant_data);
+
+        $this->assertDatabaseMissing('restaurants', $new_restaurant_data);
+
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    /**  @test */
+    //ログイン済みの管理者は店舗を更新できる
+    public function admin_can_update_restaurant()
+    {
+
+        $admin = new Admin();
+        $admin->email = 'admin@example.com';
+        $admin->password = Hash::make('nagoyameshi');
+        $admin->save();
+
+        $old_restaurant = Restaurant::factory()->create();
+
+        $categories = Category::factory()->count(3)->create();
+        $category_ids = $categories->pluck('id')->toArray();
+        $new_restaurant_data = [
+            'name' => 'テスト',
+            'description' => 'テスト',
+            'lowest_price' => 1000,
+            'highest_price' => 5000,
+            'postal_code' => '0000000',
+            'address' => 'テスト',
+            'opening_time' => '10:00',
+            'closing_time' => '20:00',
+            'seating_capacity' => 50,
+            'category_ids' => $category_ids,
+        ];
+        // category_idsを除外したデータを用意
+        $restaurant_data_without_categories = $new_restaurant_data;
+        unset($restaurant_data_without_categories['category_ids']);
+
         $response = $this->actingAs($admin, 'admin')->patch(route('admin.restaurants.update', $old_restaurant), $new_restaurant_data);
+        $this->assertDatabaseHas('restaurants', $restaurant_data_without_categories);
 
-        $this->assertDatabaseHas('restaurants', $new_restaurant_data);
+        $restaurant = Restaurant::latest('id')->first();
+
+        foreach ($category_ids as $category_id) {
+            $this->assertDatabaseHas('category_restaurant', ['restaurant_id' => $restaurant->id, 'category_id' => $category_id]);
+        }
+
         $response->assertRedirect(route('admin.restaurants.show', $old_restaurant));
-
     }
 
     /**  @test */
