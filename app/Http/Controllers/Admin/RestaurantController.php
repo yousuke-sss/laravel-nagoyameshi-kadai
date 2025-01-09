@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Restaurant;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\RestaurantRequest;
 
@@ -34,10 +35,11 @@ public function show(Restaurant $restaurant){
 //作成ページ
 public function create()
 {
-    return view('admin.restaurants.create');
+    $categories = Category::all();
+    return view('admin.restaurants.create', compact('categories'));
 }
 
-    // 作成機能
+    // 登録機能
     public function store(RestaurantRequest $request)
     {
        // フォームの入力内容をもとに、テーブルにデータを追加する
@@ -62,6 +64,9 @@ public function create()
 
        $restaurant->save(); 
 
+       $category_ids = array_filter($request->input('category_ids'));
+       $restaurant->categories()->sync($category_ids);
+
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
      
     }
@@ -69,7 +74,9 @@ public function create()
      // 編集ページ
      public function edit(Restaurant $restaurant)
      {
-        return view('admin.restaurants.edit',compact('restaurant'));
+        $categories = Category::all();
+        $category_ids = $restaurant->categories->pluck('id')->toArray();
+        return view('admin.restaurants.edit',compact('restaurant','categories','category_ids'));
      }    
 
     // 更新機能
@@ -92,6 +99,9 @@ public function create()
          $restaurant->image = basename($image);
         }
         $restaurant->save(); 
+
+        $category_ids = array_filter($request->input('category_ids'));
+        $restaurant->categories()->sync($category_ids);
 
         return redirect()->route('admin.restaurants.show', $restaurant->id)->with('flash_message', '店舗を編集しました。');
     }     
