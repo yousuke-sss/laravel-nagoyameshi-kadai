@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Restaurant;
+use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -163,8 +164,14 @@ class RestaurantTest extends TestCase
         $admin->email = 'admin@example.com';
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
+
+        $categories = Category::factory()->count(3)->create();
+        $category_ids = $categories->pluck('id')->toArray();
+
         $restaurant = Restaurant::factory()->create()->toArray();
+
         $response = $this->actingAs($admin, 'admin')->post(route('admin.restaurants.store'), $restaurant);
+        unset($restaurant['category_ids']);
         $this->assertDatabaseHas('restaurants', $restaurant);
         $response->assertRedirect(route('admin.restaurants.index'));
     }
@@ -237,6 +244,8 @@ class RestaurantTest extends TestCase
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
         $restaurant = Restaurant::factory()->create();
+        $categories = Category::factory()->count(3)->create();
+        $category_ids = $categories->pluck('id')->toArray();
         $response = $this->actingAs($admin, 'admin')->patch(route('admin.restaurants.update', $restaurant));
 
         $old_restaurant = Restaurant::factory()->create();
