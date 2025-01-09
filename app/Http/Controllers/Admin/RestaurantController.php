@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Restaurant;
 use App\Models\Category;
+use App\Models\RegularHoliday;
 use Illuminate\Http\Request;
 use App\Http\Requests\RestaurantRequest;
 
@@ -36,7 +37,8 @@ public function show(Restaurant $restaurant){
 public function create()
 {
     $categories = Category::all();
-    return view('admin.restaurants.create', compact('categories'));
+    $regular_holidays = RegularHoliday::all();
+    return view('admin.restaurants.create', compact('categories','regular_holidays'));
 }
 
     // 登録機能
@@ -67,6 +69,9 @@ public function create()
        $category_ids = array_filter($request->input('category_ids'));
        $restaurant->categories()->sync($category_ids);
 
+       $regular_holiday_ids = array_filter($request->input('regular_holiday_ids'));
+       $restaurant->regular_holidays()->sync($regular_holiday_ids);
+
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
      
     }
@@ -75,8 +80,9 @@ public function create()
      public function edit(Restaurant $restaurant)
      {
         $categories = Category::all();
+        $regular_holidays = RegularHoliday::all();
         $category_ids = $restaurant->categories->pluck('id')->toArray();
-        return view('admin.restaurants.edit',compact('restaurant','categories','category_ids'));
+        return view('admin.restaurants.edit',compact('restaurant','categories','category_ids','regular_holidays'));
      }    
 
     // 更新機能
@@ -102,6 +108,9 @@ public function create()
 
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
+
+        $regular_holiday_ids = array_filter($request->input('regular_holiday_ids'));
+       $restaurant->regular_holidays()->sync($regular_holiday_ids);
 
         return redirect()->route('admin.restaurants.show', $restaurant->id)->with('flash_message', '店舗を編集しました。');
     }     
