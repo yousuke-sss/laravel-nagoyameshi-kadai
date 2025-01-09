@@ -34,18 +34,16 @@
                     <h5 class="modal-title" id="editCategoryModalLabel">カテゴリの編集</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
-                @foreach($categories as $category)
-                <form action="{{ route('admin.categories.update', $category) }}" method="post" name="editCategoryForm">
+                <form action="" method="post" name="editCategoryForm">
                     @csrf
                     @method('patch')
                     <div class="modal-body">
-                        <input type="text" class="form-control" name="name" value="category">
+                        <input type="text" class="form-control" name="name" value="">
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn text-white shadow-sm nagoyameshi-btn">更新</button>
                     </div>
                 </form>
-                @endforeach
             </div>
         </div>
     </div>
@@ -60,7 +58,7 @@
                 </div>
                 @foreach($categories as $category)
                 <div class="modal-footer">
-                    <form action="{{ route('admin.categories.destroy', $category) }}" method="post" name="deleteCategoryForm">
+                    <form action="" method="post" name="deleteCategoryForm">
                         @csrf
                         @method('delete')
                         <button type="submit" class="btn text-white shadow-sm nagoyameshi-btn-danger">削除</button>
