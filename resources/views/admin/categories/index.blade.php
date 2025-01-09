@@ -56,7 +56,6 @@
                     <h5 class="modal-title" id="deleteCategoryModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
-                @foreach($categories as $category)
                 <div class="modal-footer">
                     <form action="" method="post" name="deleteCategoryForm">
                         @csrf
@@ -64,7 +63,6 @@
                         <button type="submit" class="btn text-white shadow-sm nagoyameshi-btn-danger">削除</button>
                     </form>
                 </div>
-                @endforeach
             </div>
         </div>
     </div>
