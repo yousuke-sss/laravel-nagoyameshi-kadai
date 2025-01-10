@@ -216,6 +216,8 @@ class RestaurantTest extends TestCase
             'regular_holiday_ids' => $regular_holiday_ids,
         ];
 
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.restaurants.store'),  $new_restaurant_data);
+
         // category_idsを除外したデータを用意
         $restaurant_data_without_categories = $new_restaurant_data;
         unset($restaurant_data_without_categories['category_ids']);
@@ -224,8 +226,9 @@ class RestaurantTest extends TestCase
         $restaurant_data_without_regularholidays = $new_restaurant_data;
         unset($restaurant_data_without_regularholidays['regular_holiday_ids']);
 
-        $response = $this->actingAs($admin, 'admin')->post(route('admin.restaurants.store'),  $new_restaurant_data);
-        $this->assertDatabaseHas('restaurants', $restaurant_data_without_categories, $restaurant_data_without_regularholidays);
+        unset($new_restaurant_data['category_ids'], $new_restaurant_data['regular_holiday_ids']);
+        $this->assertDatabaseHas('restaurants', $new_restaurant_data);
+
 
         $restaurant = Restaurant::latest('id')->first();
         //カテゴリ
@@ -361,6 +364,9 @@ class RestaurantTest extends TestCase
             'regular_holiday_ids' => $regular_holiday_ids,
 
         ];
+
+        $response = $this->actingAs($admin, 'admin')->patch(route('admin.restaurants.update', $old_restaurant), $new_restaurant_data);
+
         // category_idsを除外したデータを用意
         $restaurant_data_without_categories = $new_restaurant_data;
         unset($restaurant_data_without_categories['category_ids']);
@@ -369,8 +375,8 @@ class RestaurantTest extends TestCase
          $restaurant_data_without_regularholidays = $new_restaurant_data;
          unset($restaurant_data_without_regularholidays['regular_holiday_ids']);
 
-        $response = $this->actingAs($admin, 'admin')->patch(route('admin.restaurants.update', $old_restaurant), $new_restaurant_data);
-        $this->assertDatabaseHas('restaurants', $restaurant_data_without_categories,$restaurant_data_without_regularholidays);
+         unset($new_restaurant_data['category_ids'], $new_restaurant_data['regular_holiday_ids']);
+         $this->assertDatabaseHas('restaurants', $new_restaurant_data);
 
         $restaurant = Restaurant::latest('id')->first();
         //カテゴリ
