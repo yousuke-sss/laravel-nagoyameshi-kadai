@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 
+use App\Http\Controllers\Admin\HomeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,4 +51,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
     Route::resource('company', Admin\CompanyController::class)->only(['index', 'edit', 'update']);
 
     Route::resource('terms', Admin\TermController::class)->only(['index', 'edit', 'update']);
+});
+
+Route::group(['middleware' => 'guest:admin'], function () {
+
+    Route::get('/home', [HomeController::class, 'index'])->name('user.home');
 });
