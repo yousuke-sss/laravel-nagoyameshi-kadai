@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 
-use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,5 +55,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
 
 Route::group(['middleware' => 'guest:admin'], function () {
 
-    Route::get('/home', [HomeController::class, 'index'])->name('user.home');
+    Route::get('/', [HomeController::class, 'index'])->name('user.home');
 });
