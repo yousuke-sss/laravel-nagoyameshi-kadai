@@ -2,13 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -35,8 +37,8 @@ require __DIR__.'/auth.php';
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
     Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
-    Route::get('users', [UserController::class, 'index'])->name('users.index'); //会員一覧ページ
-    Route::get('users/{user}', [UserController::class, 'show'])->name('users.show'); //会員詳細ページ
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index'); //会員一覧ページ
+    Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show'); //会員詳細ページ
 
     Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');//店舗一覧ページ
     Route::get('restaurants/create', [RestaurantController::class, 'create'])->name('restaurants.create');//店舗追加ページ
@@ -56,4 +58,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
 Route::group(['middleware' => 'guest:admin'], function () {
 
     Route::get('/', [HomeController::class, 'index'])->name('user.home');
+
+    Route::resource('users',UserController::class)->only(['index', 'edit', 'update']);
 });
