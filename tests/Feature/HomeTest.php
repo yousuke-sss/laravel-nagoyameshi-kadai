@@ -23,7 +23,7 @@ class HomeTest extends TestCase
     public function gest_can_access_user_home_index()
     {
 
-        $response = $this->get(route('heme'));
+        $response = $this->get(route('user.home'));
         $response->assertStatus(200);
 
     }
@@ -37,7 +37,7 @@ class HomeTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $response = $this->actingAs($user)->get(route('heme'));
+        $response = $this->actingAs($user)->get(route('user.home'));
         $response->assertStatus(200);
 
     }
@@ -54,7 +54,7 @@ class HomeTest extends TestCase
         $admin->save();
 
 
-        $response = $this->actingAs($admin, 'admin')->get(route('heme'));
+        $response = $this->actingAs($admin, 'admin')->get(route('user.home'));
         $response->assertRedirect(route('admin.home'));
 
     }
