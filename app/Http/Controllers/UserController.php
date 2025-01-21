@@ -15,7 +15,7 @@ class UserController extends Controller
            // 現在ログイン中のユーザー情報を取得
            $user = Auth::user(); 
 
-        return view('users.index', compact('user'));
+        return view('user.index', compact('user'));
     }
 
     // 編集ページ
@@ -31,7 +31,7 @@ class UserController extends Controller
                  ->route('user.index')->with('error_message', '不正なアクセスです。');
          }
 
-       return view('users.edit',compact('user'));
+       return view('user.edit',compact('user'));
     }    
 
     public function update(Request $request, User $user)
