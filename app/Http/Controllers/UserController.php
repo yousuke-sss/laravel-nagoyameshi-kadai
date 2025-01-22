@@ -36,8 +36,10 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // 現在ログイン中のユーザー情報を取得
-        $currentUser = Auth::user();
+
+        if ($user->id !== Auth::id()) {
+            return redirect()->route('user.index')->with('error_message', '不正なアクセスです。');
+        }
 
         // バリデーション
         $validatedData = $request->validate([

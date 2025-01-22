@@ -96,7 +96,9 @@ class UserTest extends TestCase
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
 
-        $response = $this->actingAs($admin, 'admin')->get(route('user.edit', ['user' => 1]));
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($admin, 'admin')->get(route('user.edit', $user));
         $response->assertRedirect(route('admin.home'));
 
     }
