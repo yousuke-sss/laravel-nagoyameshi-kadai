@@ -60,6 +60,7 @@ Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::resource('user',UserController::class)->only(['index', 'edit', 'update']);
+        Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');//店舗一覧ページ
     });
     
 });
