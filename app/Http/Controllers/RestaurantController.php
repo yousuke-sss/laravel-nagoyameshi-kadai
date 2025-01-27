@@ -22,33 +22,34 @@ class RestaurantController extends Controller
 
         $sort_query = [];
         $sorted = 'created_at desc';
+        
 
         if ($request->has('select_sort')) {
             $slices = explode(' ', $request->input('select_sort'));
             $sort_query[$slices[0]] = $slices[1];
             $sorted = $request->input('select_sort');
         }
+
        
         if ($keyword !== null) {
             $restaurants = Restaurant::whereHas('categories', function ($query) use ($keyword) {
                 $query->where('categories.name', 'like', "%{$keyword}%");
             })
-            ->orWhereHas('restaurants', function ($query) use ($keyword) {
-                $query->where('restaurants.address', 'like', "%{$keyword}%");
-            })
-            ->orWhereHas('restaurants', function ($query) use ($keyword) {
-                $query->where('restaurants.name', 'like', "%{$keyword}%");
-            })
-            ->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
-            $total = $restaurants->total();
+                ->orWhere('address', 'like', "%{$keyword}%")
+                ->orWhere('name', 'like', "%{$keyword}%")
+                ->sortable($sort_query)
+                ->orderBy('created_at', 'desc')
+                ->paginate(15);
+
+                $total = $restaurants->total();
         } elseif ($category_id !== null) {
-            $restaurants = Restaurant::whereHas('categories', function ($query) {
+            $restaurants = Restaurant::whereHas('categories', function ($query) use ($category_id) {
                 $query->where('categories.id', $category_id);
             })
             ->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
-            $total = Restaurant::where('category_id', $request->category)->count();
+            $total = $restaurants->total();
        } elseif ($price !== null) {
-            $restaurants = Restaurant::table('restaurants')->where('lowest_price', '<=', $price)
+            $restaurants = Restaurant::where('lowest_price', '<=', $price)
             ->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
             $total = $restaurants->total();
        } else {
