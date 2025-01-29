@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Category;
 
+
 class RestaurantController extends Controller
 {
     public function index(Request $request)
@@ -62,5 +63,12 @@ class RestaurantController extends Controller
 
         return view('restaurants.index', compact('keyword', 'category_id', 'price', 'sorts', 'sorted', 'restaurants', 'categories', 'total'));
     }
+
+    //詳細ページ
+public function show(Restaurant $restaurant){
+
+    return view('admin.restaurants.show', compact('restaurant'));
+}
+
 
 }
