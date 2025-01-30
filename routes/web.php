@@ -59,7 +59,7 @@ Route::group(['middleware' => 'guest:admin'], function () {
 
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('restaurants', [App\Http\Controllers\RestaurantController::class, 'index'])->name('restaurants.index');//店舗一覧ページ
-    Route::get('restaurants/{restaurant}', [App\Http\Controllers\RestaurantController::class, 'show'])->name('user.restaurants.show');//店舗詳細ページ
+    Route::get('restaurants/{restaurant}', [App\Http\Controllers\RestaurantController::class, 'show'])->name('restaurants.show');//店舗詳細ページ
 
     Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::resource('user',UserController::class)->only(['index', 'edit', 'update']);
