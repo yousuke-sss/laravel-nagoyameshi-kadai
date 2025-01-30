@@ -67,7 +67,7 @@ class RestaurantController extends Controller
     //詳細ページ
 public function show(Restaurant $restaurant){
 
-    return view('admin.restaurants.show', compact('restaurant'));
+    return view('user.restaurants.show', compact('restaurant'));
 }
 
 
