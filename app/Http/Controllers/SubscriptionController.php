@@ -18,13 +18,10 @@ class SubscriptionController extends Controller
 
    public function store(Request $request)
     {
-        return $request->user()->newSubscription('premium_plan', 'prod_Rgd1EiGZwTVwfW')
-        ->trialDays(5)
-        ->allowPromotionCodes()
-        ->checkout([
-            'success_url' => route('home') . '?flash_message=有料プランへの登録が完了しました。',  // 決済成功後にトップページへ
-            'cancel_url' => route('home'),  // キャンセル時もトップページへ
-        ]);
+        $request->user()->newSubscription('premium_plan', 'price_1QnFlYBGbzCnnsvRsaBS97pi')->create($request->paymentMethodId);
+
+        return redirect()->route('home')->with('flash_message', '有料プランへの登録が完了しました。');      
+     
     }
 
     // 編集ページ

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
+use App\Http\Controllers\SubscriptionController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -69,14 +70,14 @@ Route::group(['middleware' => 'guest:admin'], function () {
         
     });
 
-    Route::group(['middleware' => ['auth', 'verified', 'subscribed']], function () {
+    Route::group(['middleware' => [Subscribed::class]], function () {
         Route::get('subscription/edit', [SubscriptionController::class, 'edit'])->name('subscription.edit');
         Route::patch('subscription', [SubscriptionController::class, 'update'])->name('subscription.update');
         Route::get('subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
         Route::delete('subscription', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
     });
     
-    Route::group(['middleware' => ['auth', 'verified', 'not.subscribed']], function () {
+    Route::group(['middleware' => [NotSubscribed::class]], function () {
         Route::get('subscription/create', [SubscriptionController::class, 'create'])->name('subscription.create');
         Route::post('subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
     });
