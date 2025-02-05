@@ -57,7 +57,7 @@ class SubscriptionController extends Controller
         // ログイン中のユーザーを取得
         $user = Auth::user();
 
-        $user->subscription('premium_plan', 'price_1QnFlYBGbzCnnsvRsaBS97pi')->canceled();
+        $user->subscription('premium_plan', 'price_1QnFlYBGbzCnnsvRsaBS97pi')->cancel();
 
         // トップページへリダイレクト
         return redirect()->route('home')->with('flash_message', '有料プランを解約しました。');

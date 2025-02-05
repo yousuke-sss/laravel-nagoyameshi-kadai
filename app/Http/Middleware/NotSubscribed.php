@@ -15,7 +15,7 @@ class NotSubscribed
     {
         if ($request->user()?->subscribed('premium_plan')) {
             // ユーザーを支払いページへリダイレクトし、サブスクリプションを購入するか尋ねる
-            return redirect('subscription.edit');
+            return redirect('subscription/edit');
         }
 
         return $next($request);
