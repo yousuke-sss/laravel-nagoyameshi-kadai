@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ReviewController;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -49,7 +50,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
     Route::post('restaurants/store', [RestaurantController::class, 'store'])->name('restaurants.store');//店舗追加機能
     Route::get('restaurants/{restaurant}', [RestaurantController::class, 'show'])->name('restaurants.show');//店舗詳細ページ
     Route::get('restaurants/{restaurant}/edit', [RestaurantController::class, 'edit'])->name('restaurants.edit');//店舗編集ページ
-    Route::patch('restaurants/{restaurant}/updata', [RestaurantController::class, 'update'])->name('restaurants.update');//店舗編集機能
+    Route::patch('restaurants/{restaurant}/update', [RestaurantController::class, 'update'])->name('restaurants.update');//店舗編集機能
     Route::delete('restaurants/{restaurant}', [RestaurantController::class, 'destroy'])->name('restaurants.destroy');//店舗削除機能
 
     Route::resource('categories', Admin\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -73,11 +74,13 @@ Route::group(['middleware' => 'guest:admin'], function () {
             Route::patch('subscription', [SubscriptionController::class, 'update'])->name('subscription.update');
             Route::get('subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
             Route::delete('subscription', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
+            Route::resource('restaurants.reviews', ReviewController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         });
         
         Route::group(['middleware' => [NotSubscribed::class]], function () {
             Route::get('subscription/create', [SubscriptionController::class, 'create'])->name('subscription.create');
             Route::post('subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
+            Route::get('restaurants.reviews', [ReviewController::class, 'index'])->name('restaurants.reviews.index');
         });
         
     });
