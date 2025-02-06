@@ -31,7 +31,7 @@ class ReviewController extends Controller
          }
  
          // ビューにデータを渡す
-         return view('restaurants.reviews.index', compact('reviews', 'restaurant'));
+         return view('reviews.index', compact('reviews', 'restaurant'));
 
  }
 
