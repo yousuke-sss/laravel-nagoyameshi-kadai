@@ -40,18 +40,21 @@ class ReviewController extends Controller
      return view('reviews.create', compact('restaurant'));
  }
 
- public function store(Request $request)
+ public function store(Request $request, Restaurant $restaurant)
  {
             // バリデーション
             $validatedData = $request->validate([
                 'score' => ['required', 'integer', 'min:1', 'max:5'],
                 'content' => ['required'], 
             ]);
+
+                // デバッグ用
+    \Log::info('Restaurant ID: ' . $request->input('restaurant_id'));
                 // レビューの新規作成
         Review::create([
         'score' => $validatedData['score'],  // バリデーションを通ったスコアを保存
         'content' => $validatedData['content'],  // バリデーションを通ったレビュー内容を保存
-        'restaurant_id' => $request->input('restaurant_id'),  // リクエストからレストランIDを取得して保存
+        'restaurant_id' => $restaurant->id,  // 直接インスタンスから取得
         'user_id' => auth()->id(),  // 現在ログインしているユーザーのIDを保存
         ]);
     
