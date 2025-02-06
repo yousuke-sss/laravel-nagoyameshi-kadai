@@ -31,7 +31,7 @@ class ReviewController extends Controller
          }
  
          // ビューにデータを渡す
-         return view('reviews.index', compact('reviews', 'restaurant'));
+         return view('restaurants.reviews.index', compact('reviews', 'restaurant'));
 
  }
 
@@ -60,7 +60,7 @@ class ReviewController extends Controller
     
             // フラッシュメッセージを設定してリダイレクト
             return redirect()
-                ->route('reviews.index')->with('flash_message', 'レビューを投稿しました。');
+                ->route('restaurants.reviews.index', $restaurant)->with('flash_message', 'レビューを投稿しました。');
         }
 
         public function edit(Restaurant $restaurant, Review $review)
@@ -71,19 +71,19 @@ class ReviewController extends Controller
 
             if($user->id !== $review->user_id ){
                 return redirect()
-                ->route('reviews.index')->with('error_message', '不正なアクセスです。');
+                ->route('restaurants.reviews.index', $restaurant)->with('error_message', '不正なアクセスです。');
             }
                 return view('reviews.edit', compact('restaurant', 'review'));
         }
 
-        public function update(Request $request, Review $review)
+        public function update(Request $request, Review $review, Restaurant $restaurant)
         {
               // 現在のユーザーを取得
               $user = Auth::user();
 
               if($user->id !== $review->user_id ){
                   return redirect()
-                  ->route('reviews.index')->with('error_message', '不正なアクセスです。');
+                  ->route('restaurants.reviews.index', $restaurant)->with('error_message', '不正なアクセスです。');
               }
 
                            // バリデーション
@@ -100,24 +100,24 @@ class ReviewController extends Controller
 
               // フラッシュメッセージを設定してリダイレクト
             return redirect()
-            ->route('reviews.index')->with('flash_message', 'レビューを編集しました。');
+            ->route('restaurants.reviews.index', $restaurant)->with('flash_message', 'レビューを編集しました。');
         }
 
-        public function destroy(Request $request, Review $review)
+        public function destroy(Request $request, Review $review, Restaurant $restaurant)
         {
              // 現在のユーザーを取得
              $user = Auth::user();
 
              if($user->id !== $review->user_id ){
                  return redirect()
-                 ->route('reviews.index')->with('error_message', '不正なアクセスです。');
+                 ->route('restaurants.reviews.index', $restaurant)->with('error_message', '不正なアクセスです。');
              }
 
              $review->delete();
 
                // フラッシュメッセージを設定してリダイレクト
             return redirect()
-            ->route('reviews.index')->with('flash_message', 'レビューを削除しました。');
+            ->route('restaurants.reviews.index', $restaurant)->with('flash_message', 'レビューを削除しました。');
         }
  }
 
