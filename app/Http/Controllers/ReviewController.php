@@ -76,7 +76,7 @@ class ReviewController extends Controller
                 return view('reviews.edit', compact('restaurant', 'review'));
         }
 
-        public function update(Request $request, Review $review, Restaurant $restaurant)
+        public function update(Request $request, Restaurant $restaurant, Review $review)
         {
               // 現在のユーザーを取得
               $user = Auth::user();
@@ -103,7 +103,7 @@ class ReviewController extends Controller
             ->route('restaurants.reviews.index', $restaurant)->with('flash_message', 'レビューを編集しました。');
         }
 
-        public function destroy(Request $request, Review $review, Restaurant $restaurant)
+        public function destroy(Restaurant $restaurant, Review $review)
         {
              // 現在のユーザーを取得
              $user = Auth::user();
