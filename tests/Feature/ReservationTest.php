@@ -124,12 +124,13 @@ class ReservationTest extends TestCase
     {
         $user = User::factory()->create();
         $restaurant = Restaurant::factory()->create();
-        $reservation = Reservation::factory()->create([
-            'restaurant_id' => $restaurant->id,
-            'user_id' => $user->id
-        ]);
-
-        $response = $this->post(route('restaurants.reservations.store', $restaurant), $reservation->toArray());
+        $reservation_data = [
+            'reservation_date' => '2024-01-01',
+            'reservation_time' => '00:00',
+            'number_of_people' => 10
+        ];
+        
+        $response = $this->actingAs($user)->post(route('restaurants.reservations.store', $restaurant), $reservation_data);
         $response->assertRedirect(route('subscription.create'));
     }
 
@@ -139,12 +140,13 @@ class ReservationTest extends TestCase
         $user = User::factory()->create();
         $user->newSubscription('premium_plan', 'price_1QnFlYBGbzCnnsvRsaBS97pi')->create('pm_card_visa');
         $restaurant = Restaurant::factory()->create();
-        $reservation = Reservation::factory()->create([
-            'restaurant_id' => $restaurant->id,
-            'user_id' => $user->id
-        ]);
+        $reservation_data = [
+            'reservation_date' => '2024-01-01',
+            'reservation_time' => '00:00',
+            'number_of_people' => 10
+        ];
 
-        $response = $this->post(route('restaurants.reservations.store', $restaurant), $reservation->toArray());
+        $response = $this->actingAs($user)->post(route('restaurants.reservations.store', $restaurant), $reservation_data);
         $response->assertRedirect(route('reservations.index'));
     }
 
@@ -164,7 +166,7 @@ class ReservationTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $response = $this->post(route('restaurants.reservations.store', $restaurant), $reservation->toArray());
+        $response = $this->actingAs($admin, 'admin')->post(route('restaurants.reservations.store', $restaurant), $reservation->toArray());
         $response->assertRedirect(route('admin.home'));
     }
 
@@ -216,7 +218,7 @@ class ReservationTest extends TestCase
             'user_id' => $otherUser->id
         ]);
 
-        $response = $this->delete(route('reservations.destroy',$reservation));
+        $response = $this->actingAs($user)->delete(route('reservations.destroy',$reservation));
         $response->assertRedirect(route('reservations.index'));
     }
 

@@ -44,7 +44,7 @@ class ReservationController extends Controller
     
             // フラッシュメッセージを設定してリダイレクト
             return redirect()
-                ->route('reservations.index', $restaurant)->with('flash_message', '予約が完了しました。');
+                ->route('reservations.index')->with('flash_message', '予約が完了しました。');
         }
 
         public function destroy(Reservation $reservation)
