@@ -20,17 +20,17 @@ class FavoriteController extends Controller
         return view('favorites.index', compact('favorite_restaurants'));
     }
 
-    public function store(Restaurant $restaurant)
+    public function store($restaurant_id)
     {
-        Auth::user()->favorite_restaurants()->attach($restaurant->id);
+        Auth::user()->favorite_restaurants()->attach($restaurant_id);
 
         return redirect()->back()->with('flash_message', 'お気に入りに追加しました。');
         
     }
 
-    public function destroy(Restaurant $restaurant)
+    public function destroy($restaurant_id)
     {
-        Auth::user()->favorite_restaurants()->detach($restaurant->id);
+        Auth::user()->favorite_restaurants()->detach($restaurant_id);
 
         return redirect()->back()->with('flash_message', 'お気に入りを解除しました。');
         
