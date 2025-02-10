@@ -5,8 +5,8 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\CompanyController;
-use App\Http\Controllers\Admin\TermController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\TermController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReservationController;
@@ -17,9 +17,6 @@ use App\Http\Controllers\UserController;
 
 use App\Http\Middleware\Subscribed;
 use App\Http\Middleware\NotSubscribed;
-
-use App\Http\Controllers\User\CompanyController as UserCompanyController;
-use App\Http\Controllers\User\TermController as UserTermController;
 
 
 /*
@@ -70,8 +67,8 @@ Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('restaurants', [App\Http\Controllers\RestaurantController::class, 'index'])->name('restaurants.index');//店舗一覧ページ
     Route::get('restaurants/{restaurant}', [App\Http\Controllers\RestaurantController::class, 'show'])->name('restaurants.show');//店舗詳細ページ
-    Route::get('company', [UserCompanyController::class, 'index'])->name('company.index');
-    Route::get('terms', [UserTermController::class, 'index'])->name('terms.index');
+    Route::get('company', [CompanyController::class, 'index'])->name('company.index');
+    Route::get('terms', [TermController::class, 'index'])->name('terms.index');
 
     Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::resource('user',UserController::class)->only(['index', 'edit', 'update']);
