@@ -28,6 +28,15 @@ class RestaurantController extends Controller
             $sort_query[$slices[0]] = $slices[1];
             $sorted = $request->input('select_sort');
         }
+
+        // クエリを構築
+        $query = Restaurant::query();
+
+        // 予約数でソートする場合のみ withCount を追加
+        if (isset($sort_query['reservations_count'])) {
+            $query->withCount('reservations')->orderByDesc('reservations_count'); // 予約数で降順ソート
+        }
+
        
         if ($keyword !== null) {
             $restaurants = Restaurant::whereHas('categories', function ($query) use ($keyword) {
