@@ -137,8 +137,9 @@
                                                 <span class="nagoyameshi-star-rating me-1" data-rate="{{ round($restaurant->reviews->avg('score') * 2) / 2 }}"></span>
                                                 {{ number_format(round($restaurant->reviews->avg('score'), 2), 2) }}（{{ $restaurant->reviews->count() }}件）
                                             </p>
-                                            <div class="mb-1">
+                                            <div class="mb-1 d-flex justify-content-between">
                                                 <span>{{ number_format($restaurant->lowest_price) }}円～{{ number_format($restaurant->highest_price) }}円</span>
+                                                <span class="text-muted">予約数: {{ $restaurant->reservations_count }}件</span>
                                             </div>
                                             <p class="card-text">{{ mb_substr($restaurant->description, 0, 75) }}@if (mb_strlen($restaurant->description) > 75)...@endif</p>
                                         </div>
